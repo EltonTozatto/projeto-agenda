@@ -9,22 +9,21 @@ namespace projeto_agenda.Entidades
     {
         public static void ExibirContatos(List<Contato> contatos)
         {
-            Console.Write("Pressione Enter para continuar...");
-            if (Console.ReadKey().Key == ConsoleKey.Enter)
+            Console.Write("Pressione qualquer tecla para continuar...");
+            Console.ReadKey(true);
+            Console.Clear();
+            Console.WriteLine("MINHA AGENDA");
+            if (contatos.Count > 0)
             {
-                Console.Clear();
-                Console.WriteLine("MINHA AGENDA");
-                if (contatos.Count > 0)
-                {
-                    contatos = contatos.OrderBy(x => x.Nome).ToList();
-                    for (int i = 0; i < contatos.Count; i++)
-                        Console.WriteLine(i + 1 + "-" + contatos[i].Nome);
-                }
-                else
-                    Console.WriteLine("Lista de contatos vazia");
-
-                Console.WriteLine();
+                contatos = contatos.OrderBy(x => x.Nome).ToList();
+                Console.WriteLine(contatos.Count + " contato(s) encontrado(s).");
+                for (int i = 0; i < contatos.Count; i++)
+                    Console.WriteLine(i + 1 + "-" + contatos[i].Nome);
             }
+            else
+                Console.WriteLine("0 contato(s) encontrado(s).");
+
+            Console.WriteLine();
         }
 
         public static string FormatarTelefone(string telefone)

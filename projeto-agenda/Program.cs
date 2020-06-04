@@ -12,7 +12,7 @@ namespace projeto_agenda
             bool continuarExecucao = true;
             List<Contato> contatos = new List<Contato>();
             Console.WriteLine("MINHA AGENDA");
-            Console.WriteLine("Lista de contatos vazia.");
+            Console.WriteLine("0 contato(s) encontrado(s).");
             Console.WriteLine();
 
             while (continuarExecucao)
@@ -111,7 +111,7 @@ namespace projeto_agenda
                 }
                 catch (FormatException e)
                 {
-                    Console.WriteLine("Erro de formatação: " + e.Message);
+                    Console.WriteLine("Erro de formato: " + e.Message);
                     Utilidades.ExibirContatos(contatos);
                 }
             }
