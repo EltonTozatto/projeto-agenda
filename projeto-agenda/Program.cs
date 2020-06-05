@@ -1,6 +1,8 @@
-﻿using projeto_agenda.Entidades;
+﻿using projeto_agenda.Database;
+using projeto_agenda.Entidades;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace projeto_agenda
 {
@@ -9,15 +11,23 @@ namespace projeto_agenda
         static string nome, endereco, telefone;
         static void Main(string[] args)
         {
+            Console.Title = "Agenda Telefônica";
             bool continuarExecucao = true;
             List<Contato> contatos = new List<Contato>();
-            Console.WriteLine("MINHA AGENDA");
-            Console.WriteLine("0 contato(s) encontrado(s).");
+            using (var context = new AgendaContext())
+            {
+                contatos = context.Contatos.OrderBy(x => x.Nome).ToList();
+            }
+            Utilidades.ExibirContatos(contatos);
             Console.WriteLine();
 
             while (continuarExecucao)
             {
-                Console.Write("O que deseja fazer (1-Adicionar, 2-Alterar, 3-Excluir, 4-Consultar, 5-Encerrar Aplicação)? ");
+                if (contatos.Count == 0)
+                    Console.Write("O que deseja fazer (1-Adicionar, 5-Encerrar Aplicação)? ");
+                else
+                    Console.Write("O que deseja fazer (1-Adicionar, 2-Alterar, 3-Excluir, 4-Consultar, 5-Encerrar Aplicação)? ");
+
                 int acao = 0;
                 try
                 {
@@ -27,17 +37,24 @@ namespace projeto_agenda
                         case 1:
                             Console.WriteLine("Insira os dados do contato");
                             Console.Write("Nome(Obrigatório):");
-                            nome = Console.ReadLine();
+                            nome = Console.ReadLine().Trim();
                             Console.Write("Endereço: ");
-                            endereco = Console.ReadLine();
+                            endereco = Console.ReadLine().Trim();
                             Console.Write("Telefone(Obrigatório): ");
-                            telefone = Console.ReadLine();
+                            telefone = Console.ReadLine().Trim();
                             if (ValidarContato())
                             {
-                                contatos.Add(new Contato(contatos.Count + 1, nome, endereco, telefone));
+                                Contato contato = new Contato(nome, endereco, telefone);
+                                using (var context = new AgendaContext())
+                                {
+                                    context.Contatos.Add(contato);
+                                    context.SaveChanges();
+                                    contatos = context.Contatos.OrderBy(x => x.Nome).ToList();
+                                }
                                 Console.WriteLine("Contato inserido!");
                             }
 
+                            Utilidades.LimparTela();
                             Utilidades.ExibirContatos(contatos);
 
                             break;
@@ -49,25 +66,33 @@ namespace projeto_agenda
                                 Console.WriteLine("Entre com os novos dados (Caso não deseje alterar um dos campos, mantenha o valor em branco.)");
 
                                 Console.Write("Nome: ");
-                                nome = Console.ReadLine();
+                                nome = Console.ReadLine().Trim();
                                 if (!string.IsNullOrWhiteSpace(nome))
                                     contatos[idAlterar - 1].Nome = nome;
 
                                 Console.Write("Endereço: ");
-                                endereco = Console.ReadLine();
+                                endereco = Console.ReadLine().Trim();
                                 if (!string.IsNullOrWhiteSpace(endereco))
                                     contatos[idAlterar - 1].Endereco = endereco;
 
                                 Console.Write("Telefone: ");
-                                telefone = Console.ReadLine();
+                                telefone = Console.ReadLine().Trim();
                                 if (!string.IsNullOrWhiteSpace(telefone))
                                     contatos[idAlterar - 1].Telefone = telefone;
+
+                                using (var context = new AgendaContext())
+                                {
+                                    context.Contatos.Update(contatos[idAlterar - 1]);
+                                    context.SaveChanges();
+                                    contatos = context.Contatos.OrderBy(x => x.Nome).ToList();
+                                }
 
                                 Console.WriteLine("Contato Alterado!");
                             }
                             else
                                 Console.WriteLine("Esse ID de contato não existe!");
 
+                            Utilidades.LimparTela();
                             Utilidades.ExibirContatos(contatos);
 
                             break;
@@ -76,28 +101,36 @@ namespace projeto_agenda
                             int idExcluir = int.Parse(Console.ReadLine());
                             if (idExcluir <= contatos.Count)
                             {
-                                contatos.RemoveAt(idExcluir - 1);
+                                using (var context = new AgendaContext())
+                                {
+                                    context.Contatos.Remove(contatos[idExcluir - 1]);
+                                    context.SaveChanges();
+                                    contatos = context.Contatos.OrderBy(x => x.Nome).ToList();
+                                }
                                 Console.WriteLine("Contato excluído!");
                             }
                             else
                                 Console.WriteLine("Esse ID de contato não existe!");
+
+                            Utilidades.LimparTela();
                             Utilidades.ExibirContatos(contatos);
 
                             break;
                         case 4:
                             Console.Write("Digite o ID do contato para consultar: ");
                             int idConsulta = int.Parse(Console.ReadLine());
-                            Contato contato = contatos.Find(x => x.Id == idConsulta);
-                            if (contato != null)
+                            if (idConsulta <= contatos.Count)
                             {
-                                Console.WriteLine("Nome: " + contato.Nome);
-                                if (!string.IsNullOrWhiteSpace(contato.Endereco))
-                                    Console.WriteLine("Endereço: " + contato.Endereco);
-                                Console.WriteLine(Utilidades.FormatarTelefone(contato.Telefone));
+                                Console.WriteLine();
+                                Console.WriteLine("Nome: " + contatos[idConsulta - 1].Nome);
+                                if (!string.IsNullOrWhiteSpace(contatos[idConsulta - 1].Endereco))
+                                    Console.WriteLine("Endereço: " + contatos[idConsulta - 1].Endereco);
+                                Console.WriteLine("Telefone: " + Utilidades.FormatarTelefone(contatos[idConsulta - 1].Telefone));
                             }
                             else
                                 Console.WriteLine("Esse ID de contato não existe!");
 
+                            Utilidades.LimparTela();
                             Utilidades.ExibirContatos(contatos);
 
                             break;
@@ -106,12 +139,15 @@ namespace projeto_agenda
                             break;
                         default:
                             Console.WriteLine("Ação inválida!");
+                            Utilidades.LimparTela();
+                            Utilidades.ExibirContatos(contatos);
                             break;
                     }
                 }
                 catch (FormatException e)
                 {
-                    Console.WriteLine("Erro de formato: " + e.Message);
+                    Console.WriteLine("Dado inválido: " + e.Message);
+                    Utilidades.LimparTela();
                     Utilidades.ExibirContatos(contatos);
                 }
             }
@@ -124,12 +160,7 @@ namespace projeto_agenda
                 Console.WriteLine("O nome não pode ser vazio.");
                 return false;
             }
-            if (string.IsNullOrWhiteSpace(telefone))
-            {
-                Console.WriteLine("O telefone não pode ser vazio.");
-                return false;
-            }
-            if (telefone.Length < 10 || telefone.Length > 11 || telefone.Length != Utilidades.somenteNumeros(telefone).Length)
+            if (string.IsNullOrWhiteSpace(telefone) || telefone.Length < 10 || telefone.Length > 11 || telefone.Length != Utilidades.somenteNumeros(telefone).Length)
             {
                 Console.WriteLine("Telefone inválido.");
                 return false;

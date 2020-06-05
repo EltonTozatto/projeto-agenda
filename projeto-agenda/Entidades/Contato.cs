@@ -11,9 +11,8 @@ namespace projeto_agenda.Entidades
 
         public Contato() { }
 
-        public Contato(int id, string nome, string endereco, string telefone)
+        public Contato(string nome, string endereco, string telefone)
         {
-            Id = id;
             Nome = nome;
             Endereco = endereco;
             Telefone = telefone;

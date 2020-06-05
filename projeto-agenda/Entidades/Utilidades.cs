@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace projeto_agenda.Entidades
@@ -9,14 +8,11 @@ namespace projeto_agenda.Entidades
     {
         public static void ExibirContatos(List<Contato> contatos)
         {
-            Console.Write("Pressione qualquer tecla para continuar...");
-            Console.ReadKey(true);
-            Console.Clear();
             Console.WriteLine("MINHA AGENDA");
             if (contatos.Count > 0)
             {
-                contatos = contatos.OrderBy(x => x.Nome).ToList();
                 Console.WriteLine(contatos.Count + " contato(s) encontrado(s).");
+                Console.WriteLine();
                 for (int i = 0; i < contatos.Count; i++)
                     Console.WriteLine(i + 1 + "-" + contatos[i].Nome);
             }
@@ -46,10 +42,16 @@ namespace projeto_agenda.Entidades
 
         public static string somenteNumeros(string toNormalize)
         {
-            string resultString = string.Empty;
             Regex regexObj = new Regex(@"[^\d]");
-            resultString = regexObj.Replace(toNormalize, "");
+            string resultString = regexObj.Replace(toNormalize, "");
             return resultString;
+        }
+
+        public static void LimparTela()
+        {
+            Console.Write("Pressione qualquer tecla para continuar...");
+            Console.ReadKey(true);
+            Console.Clear();
         }
     }
 }
