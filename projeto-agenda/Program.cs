@@ -1,8 +1,7 @@
-﻿using projeto_agenda.Database;
-using projeto_agenda.Entidades;
+﻿using projeto_agenda.Entidades;
+using projeto_agenda.Repositorios;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace projeto_agenda
 {
@@ -11,13 +10,11 @@ namespace projeto_agenda
         static string nome, endereco, telefone;
         static void Main(string[] args)
         {
+            ContatoDAO contatoDAO = new ContatoDAO();
+            contatoDAO.CriarBanco();
             Console.Title = "Agenda Telefônica";
             bool continuarExecucao = true;
-            List<Contato> contatos = new List<Contato>();
-            using (var context = new AgendaContext())
-            {
-                contatos = context.Contatos.OrderBy(x => x.Nome).ToList();
-            }
+            List<Contato> contatos = contatoDAO.RecuperarTodos();
             Utilidades.ExibirContatos(contatos);
             Console.WriteLine();
 
@@ -45,13 +42,7 @@ namespace projeto_agenda
                             if (ValidarContato())
                             {
                                 Contato contato = new Contato(nome, endereco, telefone);
-                                using (var context = new AgendaContext())
-                                {
-                                    context.Contatos.Add(contato);
-                                    context.SaveChanges();
-                                    contatos = context.Contatos.OrderBy(x => x.Nome).ToList();
-                                }
-                                Console.WriteLine("Contato inserido!");
+                                contatos = contatoDAO.Inserir(contato);
                             }
 
                             Utilidades.LimparTela();
@@ -80,14 +71,7 @@ namespace projeto_agenda
                                 if (!string.IsNullOrWhiteSpace(telefone))
                                     contatos[idAlterar - 1].Telefone = telefone;
 
-                                using (var context = new AgendaContext())
-                                {
-                                    context.Contatos.Update(contatos[idAlterar - 1]);
-                                    context.SaveChanges();
-                                    contatos = context.Contatos.OrderBy(x => x.Nome).ToList();
-                                }
-
-                                Console.WriteLine("Contato Alterado!");
+                                contatos = contatoDAO.Alterar(contatos[idAlterar -1]);
                             }
                             else
                                 Console.WriteLine("Esse ID de contato não existe!");
@@ -100,15 +84,7 @@ namespace projeto_agenda
                             Console.Write("Digite o ID do contato que deseja excluir: ");
                             int idExcluir = int.Parse(Console.ReadLine());
                             if (idExcluir <= contatos.Count)
-                            {
-                                using (var context = new AgendaContext())
-                                {
-                                    context.Contatos.Remove(contatos[idExcluir - 1]);
-                                    context.SaveChanges();
-                                    contatos = context.Contatos.OrderBy(x => x.Nome).ToList();
-                                }
-                                Console.WriteLine("Contato excluído!");
-                            }
+                                contatos = contatoDAO.Excluir(contatos[idExcluir -1]);
                             else
                                 Console.WriteLine("Esse ID de contato não existe!");
 
