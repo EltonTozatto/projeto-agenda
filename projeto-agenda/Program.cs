@@ -10,9 +10,9 @@ namespace projeto_agenda
         static string nome, endereco, telefone;
         static void Main(string[] args)
         {
+            Console.Title = "Agenda Telefônica";
             ContatoDAO contatoDAO = new ContatoDAO();
             contatoDAO.CriarBanco();
-            Console.Title = "Agenda Telefônica";
             bool continuarExecucao = true;
             List<Contato> contatos = contatoDAO.RecuperarTodos();
             Utilidades.ExibirContatos(contatos);
