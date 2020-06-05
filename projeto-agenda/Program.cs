@@ -50,63 +50,81 @@ namespace projeto_agenda
 
                             break;
                         case 2:
-                            Console.Write("Digite o ID do contato que deseja alterar: ");
-                            int idAlterar = int.Parse(Console.ReadLine());
-                            if (idAlterar <= contatos.Count)
+                            if (contatos.Count > 0)
                             {
-                                Console.WriteLine("Entre com os novos dados (Caso não deseje alterar um dos campos, mantenha o valor em branco.)");
+                                Console.Write("Digite o ID do contato que deseja alterar: ");
+                                int idAlterar = int.Parse(Console.ReadLine());
+                                if (idAlterar <= contatos.Count)
+                                {
+                                    Console.WriteLine("Entre com os novos dados (Caso não deseje alterar um dos campos, mantenha o valor em branco.)");
 
-                                Console.Write("Nome: ");
-                                nome = Console.ReadLine().Trim();
-                                if (!string.IsNullOrWhiteSpace(nome))
-                                    contatos[idAlterar - 1].Nome = nome;
+                                    Console.Write("Nome: ");
+                                    nome = Console.ReadLine().Trim();
+                                    if (!string.IsNullOrWhiteSpace(nome))
+                                        contatos[idAlterar - 1].Nome = nome;
 
-                                Console.Write("Endereço: ");
-                                endereco = Console.ReadLine().Trim();
-                                if (!string.IsNullOrWhiteSpace(endereco))
-                                    contatos[idAlterar - 1].Endereco = endereco;
+                                    Console.Write("Endereço: ");
+                                    endereco = Console.ReadLine().Trim();
+                                    if (!string.IsNullOrWhiteSpace(endereco))
+                                        contatos[idAlterar - 1].Endereco = endereco;
 
-                                Console.Write("Telefone: ");
-                                telefone = Console.ReadLine().Trim();
-                                if (!string.IsNullOrWhiteSpace(telefone))
-                                    contatos[idAlterar - 1].Telefone = telefone;
+                                    Console.Write("Telefone: ");
+                                    telefone = Console.ReadLine().Trim();
+                                    if (!string.IsNullOrWhiteSpace(telefone))
+                                        contatos[idAlterar - 1].Telefone = telefone;
 
-                                contatos = contatoDAO.Alterar(contatos[idAlterar -1]);
+                                    contatos = contatoDAO.Alterar(contatos[idAlterar - 1]);
+                                }
+                                else
+                                    Console.WriteLine("Esse ID de contato não existe!");
+
+                                Utilidades.LimparTela();
                             }
                             else
-                                Console.WriteLine("Esse ID de contato não existe!");
+                                Console.Clear();
 
-                            Utilidades.LimparTela();
                             Utilidades.ExibirContatos(contatos);
 
                             break;
                         case 3:
-                            Console.Write("Digite o ID do contato que deseja excluir: ");
-                            int idExcluir = int.Parse(Console.ReadLine());
-                            if (idExcluir <= contatos.Count)
-                                contatos = contatoDAO.Excluir(contatos[idExcluir -1]);
-                            else
-                                Console.WriteLine("Esse ID de contato não existe!");
+                            if (contatos.Count > 0)
+                            {
+                                Console.Write("Digite o ID do contato que deseja excluir: ");
+                                int idExcluir = int.Parse(Console.ReadLine());
+                                if (idExcluir <= contatos.Count)
+                                    contatos = contatoDAO.Excluir(contatos[idExcluir - 1]);
+                                else
+                                    Console.WriteLine("Esse ID de contato não existe!");
 
-                            Utilidades.LimparTela();
+                                Utilidades.LimparTela();
+                            }
+                            else
+                                Console.Clear();
+
                             Utilidades.ExibirContatos(contatos);
 
                             break;
                         case 4:
-                            Console.Write("Digite o ID do contato para consultar: ");
-                            int idConsulta = int.Parse(Console.ReadLine());
-                            if (idConsulta <= contatos.Count)
+                            if (contatos.Count > 0)
                             {
-                                Console.WriteLine();
-                                Console.WriteLine("Nome: " + contatos[idConsulta - 1].Nome);
-                                if (!string.IsNullOrWhiteSpace(contatos[idConsulta - 1].Endereco))
-                                    Console.WriteLine("Endereço: " + contatos[idConsulta - 1].Endereco);
-                                Console.WriteLine("Telefone: " + Utilidades.FormatarTelefone(contatos[idConsulta - 1].Telefone));
+                                Console.Write("Digite o ID do contato para consultar: ");
+                                int idConsulta = int.Parse(Console.ReadLine());
+                                if (idConsulta <= contatos.Count)
+                                {
+                                    Console.WriteLine();
+                                    Console.WriteLine("Nome: " + contatos[idConsulta - 1].Nome);
+                                    if (!string.IsNullOrWhiteSpace(contatos[idConsulta - 1].Endereco))
+                                        Console.WriteLine("Endereço: " + contatos[idConsulta - 1].Endereco);
+                                    Console.WriteLine("Telefone: " + Utilidades.FormatarTelefone(contatos[idConsulta - 1].Telefone));
+                                }
+                                else
+                                    Console.WriteLine("Esse ID de contato não existe!");
+
+                                Utilidades.LimparTela();
                             }
                             else
-                                Console.WriteLine("Esse ID de contato não existe!");
+                                Console.Clear();
 
-                            Utilidades.LimparTela();
                             Utilidades.ExibirContatos(contatos);
 
                             break;

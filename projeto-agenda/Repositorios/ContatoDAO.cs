@@ -23,9 +23,9 @@ namespace projeto_agenda.Repositorios
                     context.Database.Migrate();
                     sw.Stop();
                     Console.WriteLine("Criado com sucesso em: " + sw.Elapsed.ToString(@"mm\:ss"));
+                    Utilidades.LimparTela();
                 }
-                Console.WriteLine("Banco de dados verificado com sucesso.");
-                Utilidades.LimparTela();
+                Console.Clear();
             }
         }
 
