@@ -16,7 +16,6 @@ namespace projeto_agenda
             bool continuarExecucao = true;
             List<Contato> contatos = contatoDAO.RecuperarTodos();
             Utilidades.ExibirContatos(contatos);
-            Console.WriteLine();
 
             while (continuarExecucao)
             {
@@ -138,7 +137,7 @@ namespace projeto_agenda
                             break;
                     }
                 }
-                catch (FormatException e)
+                catch (Exception e)
                 {
                     Console.WriteLine("Dado inválido: " + e.Message);
                     Utilidades.LimparTela();
